@@ -13,9 +13,17 @@ class FlareProgressController extends FlareController {
   FlutterActorArtboard _artboard;
   ActorAnimation _animation;
 
+  bool _lockAdvance;
+
   @override
   bool advance(FlutterActorArtboard artboard, double elapsed) {
-    return false;
+    /// Only allow once advance per update
+    if (_lockAdvance == false) {
+      _lockAdvance = true;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @override
@@ -34,6 +42,7 @@ class FlareProgressController extends FlareController {
   void update(double t) {
     if (_animation != null) {
       final time = _animation.duration * t;
+      _lockAdvance = false;
       _animation.apply(time, _artboard, 1.0);
     }
   }
